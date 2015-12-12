@@ -4,7 +4,7 @@ using System;
 
 public class Map : MonoBehaviour {
 
-	public static GameObject Castle;
+	public static Castle KingdomCastle;
 
 	public static MapResources Assets;
 
@@ -23,13 +23,13 @@ public class Map : MonoBehaviour {
 
 	private void PlaceKingdom() {
 
-		Castle = Instantiate(Assets.CastlePrefab);
-		Castle.transform.position = 
+		KingdomCastle = Instantiate(Assets.CastlePrefab).GetComponent<Castle>();
+		KingdomCastle.transform.position = 
 			new Vector2(UnityEngine.Random.Range(-12f, 12f), 
 						UnityEngine.Random.Range(-12f, 12f));
 		Camera.main.transform.position = 
-			new Vector3(Castle.transform.position.x, 
-						Castle.transform.position.y, 
+			new Vector3(KingdomCastle.transform.position.x, 
+						KingdomCastle.transform.position.y, 
 						Camera.main.transform.position.z);
 	}
 

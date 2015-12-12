@@ -18,11 +18,10 @@ public class Castle : MonoBehaviour {
 			if (_integrity < 0) {
 				GameManager.GameOver();
 			}
+			GameManager.Instance.UpdateCastleIntegrityUI(_integrity, _maxIntegrity);
 		}
 
 	}
-	public int Gold = 0;
-
 	private int _integrity;
 	private int _maxIntegrity = 100;
 	private CastleUI _castleUI;
@@ -35,5 +34,10 @@ public class Castle : MonoBehaviour {
 	void Start() {
 
 		Integrity = _maxIntegrity;
+	}
+
+	public void DisplayHeroOnUI(Hero hero) {
+
+		_castleUI.DisplayHero(hero);
 	}
 }

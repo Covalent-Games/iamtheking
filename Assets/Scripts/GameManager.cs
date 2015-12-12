@@ -8,12 +8,15 @@ public class GameManager : MonoBehaviour {
 	public static GameManager Instance;
 
 	public Map KingdomMap;
-	public List<Hero> Heroes = new List<Hero>();
+	public Dictionary<Guid, Hero> Heroes = new Dictionary<Guid, Hero>();
+	public List<Village> Villages = new List<Village>();
 	public int IdleHeroCount = 0;
+	public int KingdomPopulation = 100;
+	public int Gold = 0;
 
 	private GameManagerUI _ui;
 
-	void Awake() {
+	private void Awake() {
 
 		//Ensure this is the only GameManager.
 		if (Instance == null) {
@@ -24,48 +27,55 @@ public class GameManager : MonoBehaviour {
 
 		KingdomMap = FindObjectOfType<Map>();
 		_ui = GetComponent<GameManagerUI>();
+		_ui.Manager = this;
 	}
 
-	void Start () {
+	private void Start () {
 
-		InstantiateNewHero(Map.Castle.transform.position);
+		Hero hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
+		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
+		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
+		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
+		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
+		hero.Allegiance = 1f;
 
 	}
 
-	void Update () {
+	private void Update () {
 
-		UpdateIdleHeroCount();
+		// TODO If there's bad performance, make this event based.
+		_ui.UpdateIdleHeroCount(IdleHeroCount);
+		_ui.UpdateGold(Gold);
+		_ui.UpdatePopulation(KingdomPopulation);
 
 	}
 
-	private void UpdateIdleHeroCount() {
+	public void UpdateCastleIntegrityUI(int current, int max) {
 
-		// While this is normally bad practice, there shouldn't be more than 10-15 heroes ever.
-		Hero[] idleHeroes = Heroes.Where(hero => hero.Idle).ToArray();
-		if (idleHeroes.Length != IdleHeroCount) {
-			IdleHeroCount = idleHeroes.Length;
-			_ui.IdleHeroesText.text = "Idle Heroes: " + IdleHeroCount;
-		}
+		_ui.CastleIntegrityBar.fillAmount = (float)current / (float)max;
 	}
 
-	private void InstantiateNewHero(Vector3 position) {
+	/// <summary>
+	/// Create a new hero at a given position.
+	/// </summary>
+	/// <param name="position">Where to spawn the hero.</param>
+	/// <param name="active">Whether or not the hero GameObject should be active to start.</param>
+	/// <returns>Hero instance</returns>
+	public Hero InstantiateNewHero(Vector3 position, bool active=false) {
 
-		GameObject hero = Instantiate(Map.Assets.HeroPrefab);
-		hero.transform.position = position;
-		Heroes.Add(hero.GetComponent<Hero>());
+		GameObject heroGO = Instantiate(Map.Assets.HeroPrefab);
+		Hero hero = heroGO.GetComponent<Hero>();
+		heroGO.transform.position = position;
+		Heroes.Add(hero.ID, hero);
 		IdleHeroCount++;
 		_ui.IdleHeroesText.text = "Idle Heroes: " + IdleHeroCount;
-		hero.gameObject.SetActive(false);
+		heroGO.gameObject.SetActive(active);
 
+		return hero;
 	}
 
 	internal static void GameOver() {
 
 		throw new NotImplementedException();
-	}
-
-	public void ButtonMcButton() {
-
-		Debug.Log("Pressing button");
 	}
 }

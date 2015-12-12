@@ -11,5 +11,6 @@ public class QuestObject {
 
 	public enum QuestType {
 		Slayer,
+		Founding,
 	}
 }

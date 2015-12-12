@@ -1,14 +1,13 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System;
 
 public class HeroTavernSelection : MonoBehaviour {
 
+	[SerializeField]
+	public Guid HeroID;
+
 	public void SelectHero() {
 
-		Debug.Log("Selected " + name + ". GameManager = " + GameManager.Instance.name);
-	}
-
-	public void Deselect() {
-
+		Map.KingdomCastle.DisplayHeroOnUI(GameManager.Instance.Heroes[HeroID]);
 	}
 }
