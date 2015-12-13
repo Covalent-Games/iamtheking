@@ -321,7 +321,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: .192156866, g: .301960796, b: .474509805, a: .0196078438}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: .0196078438}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -1302,6 +1302,7 @@ GameObject:
   - 4: {fileID: 1658465979}
   - 114: {fileID: 1658465978}
   - 114: {fileID: 1658465980}
+  - 114: {fileID: 1658465981}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1325,6 +1326,7 @@ MonoBehaviour:
   IdleHeroCount: 0
   KingdomPopulation: 100
   Gold: 0
+  QuestCreator: {fileID: 0}
 --- !u!4 &1658465979
 Transform:
   m_ObjectHideFlags: 0
@@ -1354,6 +1356,17 @@ MonoBehaviour:
   IdleHeroesText: {fileID: 1633309897}
   KingdomPopulation: {fileID: 0}
   Gold: {fileID: 0}
+--- !u!114 &1658465981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1658465977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 512d9e39cd293f24e846125977fb6fe5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1677687002
 GameObject:
   m_ObjectHideFlags: 0
@@ -1584,6 +1597,52 @@ MonoBehaviour:
   m_Spacing: 0
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
+--- !u!1001 &2054023106
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 412500, guid: 0b476d2afdf79744abee679ce1502c0a, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 412500, guid: 0b476d2afdf79744abee679ce1502c0a, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 412500, guid: 0b476d2afdf79744abee679ce1502c0a, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 412500, guid: 0b476d2afdf79744abee679ce1502c0a, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 412500, guid: 0b476d2afdf79744abee679ce1502c0a, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 412500, guid: 0b476d2afdf79744abee679ce1502c0a, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 412500, guid: 0b476d2afdf79744abee679ce1502c0a, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 412500, guid: 0b476d2afdf79744abee679ce1502c0a, type: 2}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 137200, guid: 0b476d2afdf79744abee679ce1502c0a, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 0b476d2afdf79744abee679ce1502c0a, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &2056030187
 GameObject:
   m_ObjectHideFlags: 0

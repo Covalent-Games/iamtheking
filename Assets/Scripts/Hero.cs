@@ -43,6 +43,7 @@ public class Hero : MonoBehaviour {
 		Wisdom = UnityEngine.Random.value;
 		Cunning = UnityEngine.Random.value;
 		Exp = UnityEngine.Random.value + UnityEngine.Random.value;
+		Allegiance = UnityEngine.Random.value;
 	}
 	
 	void Update () {

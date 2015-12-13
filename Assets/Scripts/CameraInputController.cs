@@ -6,12 +6,13 @@ using UnityEngine.EventSystems;
 
 public class CameraInputController : MonoBehaviour {
 
+	public static ISelectable CurrentSelectedObject;
+
 	public float ScrollSpeed = 0.75f;
 	public float PinchSpeed = 1.5f;
 
 	private Camera _camera;
 	private float _previousPinchDistance;
-	private ISelectable _currentSelectedObject;
 	private bool _centering = false;
 	
 
@@ -25,15 +26,15 @@ public class CameraInputController : MonoBehaviour {
 		PinchZoom();
 		HandleSingleTouch();
 		
-		if (_currentSelectedObject != null && !_centering) {
+		if (CurrentSelectedObject != null && !_centering) {
 			//CenterCamOnSelected();
 		}
 	}
 
 	private void CenterCamOnSelected() {
 
-		if (((MonoBehaviour)_currentSelectedObject).CompareTag("Hero")) {
-			Vector3 targetPos = GetCameraCenteringPos(((MonoBehaviour)_currentSelectedObject).transform);
+		if (((MonoBehaviour)CurrentSelectedObject).CompareTag("Hero")) {
+			Vector3 targetPos = GetCameraCenteringPos(((MonoBehaviour)CurrentSelectedObject).transform);
 			_camera.transform.position = targetPos; 
 		}
 
@@ -47,15 +48,15 @@ public class CameraInputController : MonoBehaviour {
 			// If we touched a valied selectable object
 			if (selected != null) {
 				// If the object we touched was already selected.
-				if (_currentSelectedObject == selected) {
+				if (CurrentSelectedObject == selected) {
 					DeselectObject(selected);
 				} else {
-					if (_currentSelectedObject != null) {
-						DeselectObject(_currentSelectedObject); 
+					if (CurrentSelectedObject != null) {
+						DeselectObject(CurrentSelectedObject); 
 					}
 					selected.Select();
 					StartCoroutine(CenterSelectableUIRoutine(hitinfo.transform));
-					_currentSelectedObject = selected;
+					CurrentSelectedObject = selected;
 				}
 			} 
 		}			
@@ -92,7 +93,7 @@ public class CameraInputController : MonoBehaviour {
 		_camera.orthographicSize = 5f;
 
 		Vector3 targetScreenPos =
-			new Vector3(Screen.width / 8f,
+			new Vector3(Screen.width / 12f,
 						Screen.height - Screen.height / 5.5f,
 						0f);
 		Vector3 offset = _camera.ScreenToWorldPoint(targetScreenPos) - tform.position;
@@ -107,7 +108,7 @@ public class CameraInputController : MonoBehaviour {
 	private void DeselectObject(ISelectable selected) {
 
 		selected.Deselect();
-		_currentSelectedObject = null;
+		CurrentSelectedObject = null;
 	}
 
 	private void FingerDrag(Touch touch) {
@@ -120,8 +121,8 @@ public class CameraInputController : MonoBehaviour {
 		_camera.transform.position = pos;
 
 		// Deselect any selected object.
-		if (_currentSelectedObject != null) {
-			DeselectObject(_currentSelectedObject);
+		if (CurrentSelectedObject != null) {
+			DeselectObject(CurrentSelectedObject);
 		}
 	}
 

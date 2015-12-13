@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.Extensions;
 using System;
 using System.Linq;
+using System.Collections;
 
 public class GameManagerUI : MonoBehaviour {
 
@@ -38,5 +39,30 @@ public class GameManagerUI : MonoBehaviour {
 	internal void UpdatePopulation(int population) {
 
 		KingdomPopulation.text = "Kingdom Population: " + population.ToString();
+	}
+
+	public static IEnumerator ZoomOutAndCenterRoutine() {
+
+		Vector3 targetPos = new Vector3(0f, 0f, Camera.main.transform.position.z);
+		Vector3 zoomVelocity = Vector3.zero;
+		float orthoVelocity = 0f;
+		int frameDelayToAcceptTouch = 0;
+		while (Camera.main.transform.position != targetPos) {
+			frameDelayToAcceptTouch++;
+			if (frameDelayToAcceptTouch > 20 && Input.touchCount > 0) {
+				break;
+			}
+			Camera.main.transform.position = Vector3.SmoothDamp(
+				Camera.main.transform.position,
+				targetPos,
+				ref zoomVelocity,
+				0.25f);
+			Camera.main.orthographicSize = Mathf.SmoothDamp(
+				Camera.main.orthographicSize,
+				15f,
+				ref orthoVelocity,
+				0.2f);
+			yield return null;
+		}
 	}
 }

@@ -9,10 +9,12 @@ public class GameManager : MonoBehaviour {
 
 	public Map KingdomMap;
 	public Dictionary<Guid, Hero> Heroes = new Dictionary<Guid, Hero>();
+	public Dictionary<Guid, KingdomAlert> Alerts = new Dictionary<Guid, KingdomAlert>();
 	public List<Village> Villages = new List<Village>();
 	public int IdleHeroCount = 0;
 	public int KingdomPopulation = 100;
 	public int Gold = 0;
+	public QuestBuilder QuestCreator;
 
 	private GameManagerUI _ui;
 
@@ -28,6 +30,7 @@ public class GameManager : MonoBehaviour {
 		KingdomMap = FindObjectOfType<Map>();
 		_ui = GetComponent<GameManagerUI>();
 		_ui.Manager = this;
+		QuestCreator = GetComponent<QuestBuilder>();
 	}
 
 	private void Start () {
@@ -39,6 +42,21 @@ public class GameManager : MonoBehaviour {
 		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
 		hero.Allegiance = 1f;
 
+		InstantiateNewAlert(
+			new Vector2(UnityEngine.Random.Range(-12, 12), UnityEngine.Random.Range(-12, 12)));
+
+	}
+
+	private KingdomAlert InstantiateNewAlert(Vector2 vector2) {
+
+		GameObject newAlert = 
+			(GameObject)Instantiate(Map.Assets.EventAlertPrefab, vector2, Quaternion.identity);
+
+		KingdomAlert alert = newAlert.GetComponent<KingdomAlert>();
+		Alerts.Add(alert.AlertID, alert);
+		newAlert.SetActive(true);
+
+		return alert;
 	}
 
 	private void Update () {

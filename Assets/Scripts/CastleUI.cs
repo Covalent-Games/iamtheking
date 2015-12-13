@@ -1,16 +1,18 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.Extensions;
 using UnityEngine.UI;
 
 
 public class CastleUI : MonoBehaviour, ISelectable {
 
-	private Hero _selectedHero;
+	public Hero SelectedHero;
 
 	private Castle _castle;
 	private Canvas _canvas;
 
 	private Text _name;
+	private Text _heroesInTavern;
 	private Transform _heroList;
 	private GameObject _heroIconPrefab;
 
@@ -21,6 +23,10 @@ public class CastleUI : MonoBehaviour, ISelectable {
 	private Image _heroStrBar;
 	private Image _heroWisBar;
 	private Image _heroCunBar;
+	private Image _heroAllegianceBar;
+	private Text _heroAllegiancePer;
+
+	private Button _startQuestButton;
 
 	void Awake() {
 
@@ -31,10 +37,11 @@ public class CastleUI : MonoBehaviour, ISelectable {
 		_canvas.enabled = false;
 		// General UI
 		_name = transform.FindChildRecursive("Name_text").GetComponent<Text>();
+		_heroesInTavern = transform.FindChildRecursive("TavernTitle_Text").GetComponent<Text>();
 		_heroList = transform.FindChildRecursive("Content");
 		_heroIconPrefab = (GameObject)Resources.Load("UIObjects/HeroIcon");
 		// Hero Info UI
-		_heroInfoCanvas = transform.FindChildRecursive("HeroInfo_Canvas");
+		_heroInfoCanvas = transform.FindChildRecursive("HeroInfo");
 		_heroInfoCanvas.gameObject.SetActive(false);
 		_heroLevel = transform.FindChildRecursive("HeroLevel_Text").GetComponent<Text>();
 		_heroLevelGauge = transform.FindChildRecursive("HeroLevelGauge_Image").GetComponent<Image>();
@@ -42,11 +49,18 @@ public class CastleUI : MonoBehaviour, ISelectable {
 		_heroStrBar = transform.FindChildRecursive("StrengthBar_Image").GetComponent<Image>();
 		_heroWisBar = transform.FindChildRecursive("WisdomBar_Image").GetComponent<Image>();
 		_heroCunBar = transform.FindChildRecursive("CunningBar_Image").GetComponent<Image>();
+		_heroAllegianceBar = transform.FindChildRecursive("AllegianceBar_Image").GetComponent<Image>();
+		_heroAllegiancePer = transform.FindChildRecursive("AllegiancePercent_Text").GetComponent<Text>();
+
+		// Add listening to the start quest button to reference the selected hero properly.
+		_startQuestButton = transform.FindChildRecursive("StartQuestCreator_Button").GetComponent<Button>();
+		_startQuestButton.onClick.AddListener(
+			delegate { GameManager.Instance.QuestCreator.SelectHeroForNewQuest(this); });
 	}
 
 	public void DisplayHero(Hero hero) {
 
-		_selectedHero = hero;
+		SelectedHero = hero;
 		_heroInfoCanvas.gameObject.SetActive(true);
 		_heroLevel.text = "Level: " + hero.Level;
 		_heroLevelGauge.fillAmount = hero.Exp / hero.ExpToLevel;
@@ -54,12 +68,19 @@ public class CastleUI : MonoBehaviour, ISelectable {
 		_heroStrBar.fillAmount = hero.Strength;
 		_heroWisBar.fillAmount = hero.Wisdom;
 		_heroCunBar.fillAmount = hero.Cunning;
+		_heroAllegiancePer.text = ((int)(hero.Allegiance * 100)) + "%";
+		_heroAllegianceBar.fillAmount = hero.Allegiance;
 	}
 
 	public void Select() {
 
 		_canvas.enabled = true;
-
+		if (GameManager.Instance.IdleHeroCount > 0) {
+			_heroesInTavern.text = "Heroes in the Tavern: " + GameManager.Instance.IdleHeroCount;
+		} else {
+			_heroesInTavern.text = "Your barkeeper isn't happy. He doesn't have any customers. But this is good news" +
+				" for your kingdom. All your heroes are out on quests!";
+		}
 		GameObject heroIcon;
 		foreach(Hero hero in GameManager.Instance.Heroes.Values) {
 			if (hero.Idle) {
@@ -91,7 +112,7 @@ public class CastleUI : MonoBehaviour, ISelectable {
 			Destroy(_heroList.GetChild(i).gameObject);
 		}
 
-		if (_selectedHero != null) {
+		if (SelectedHero != null) {
 			_heroInfoCanvas.gameObject.SetActive(false);
 		}
 
