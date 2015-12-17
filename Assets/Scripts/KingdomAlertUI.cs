@@ -11,6 +11,7 @@ public class KingdomAlertUI : MonoBehaviour, ISelectable {
 	private Text _alertTitle;
 	private Text _alertQuantity;
 	private Button _actionButton;
+	private Text _alertDesc;
 
 	private void Awake() {
 
@@ -18,6 +19,7 @@ public class KingdomAlertUI : MonoBehaviour, ISelectable {
 		_canvas = transform.FindChildRecursive("Info_Canvas").GetComponent<Canvas>();
 		_canvas.enabled = false;
 		_alertTitle = transform.FindChildRecursive("AlertTitle_Text").GetComponent<Text>();
+		_alertDesc = transform.FindChildRecursive("AlertDesc_Text").GetComponent<Text>();
 		_alertQuantity = transform.FindChildRecursive("AlertQuantity_Text").GetComponent<Text>();
 		_actionButton = transform.FindChildRecursive("Action_Button").GetComponent<Button>();
 	}
@@ -25,6 +27,7 @@ public class KingdomAlertUI : MonoBehaviour, ISelectable {
 	private void Start() {
 
 		_alertTitle.text = _alert.AlertTitle;
+		_alertDesc.text = _alert.AlertDescription;
 	}
 
 	public void Select() {
@@ -48,9 +51,11 @@ public class KingdomAlertUI : MonoBehaviour, ISelectable {
 
 		switch (_alert.AlertType) {
 			case KingdomAlert.AlertTypeEnum.EnemySpotted:
-				_alertQuantity.text = string.Format("{0} {1} have been spotted near this area!",
-					_alert.Quantity, _alert.EnemyName);
+				_alertQuantity.text = 
+					string.Format(_alert.QuantityTextTemplate, _alert.Quantity, _alert.EnemyName);
 				_canvas.enabled = true;
+
+				Debug.Log(Mathf.Clamp(.02f / .99f, .01f, .90f));
 				break;
 		}
 	}

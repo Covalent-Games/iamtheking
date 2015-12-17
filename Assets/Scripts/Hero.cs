@@ -13,6 +13,8 @@ public class Hero : MonoBehaviour {
 	public List<QuestObject> Quests = new List<QuestObject>();
 	public Sprite UIImage;
 	public float Allegiance = 0.5f;
+	public int Health = 10;
+	public int MaxHealth = 10;
 	public float Strength = 0.1f;
 	public float Wisdom = 0.1f;
 	public float Cunning = 0.1f;

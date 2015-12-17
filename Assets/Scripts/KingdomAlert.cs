@@ -7,7 +7,9 @@ public class KingdomAlert : MonoBehaviour {
 
 	public Guid AlertID;
 	public string AlertTitle;
+	public string AlertDescription;
 	public int Quantity;
+	public string QuantityTextTemplate;
 	public string EnemyName;
 	public AlertTypeEnum AlertType;
 
@@ -26,18 +28,18 @@ public class KingdomAlert : MonoBehaviour {
 
 	private void GenerateNewAlert() {
 
-		AlertTitle = "Orcs are raiding the lands!";
+		AlertTitle = "Orc Raiding Party";
+		AlertDescription = "Orcs are raiding the lands of your kingdom!";
 		int typeCount = Enum.GetNames(typeof(AlertTypeEnum)).Length;
 		AlertType = (AlertTypeEnum)Random.Range(0, typeCount);
 
 		int population = GameManager.Instance.KingdomPopulation;
 		switch (AlertType) {
 			case AlertTypeEnum.EnemySpotted:
-				// A weighted quantity based on 1% of the current population.
-				Quantity = (int)Mathf.Clamp(
-					Random.Range(0, population / 100f) + Random.Range(0, population / 100f),
-					1, 
-					Mathf.Infinity) + 1;
+				// A weighted random quantity based on 1% of the current population.
+				float wRand = Random.Range(0, population / 100f) + Random.Range(0, population / 100f);
+				Quantity = (int)Mathf.Clamp(wRand, 1, Mathf.Infinity) + 1;
+				QuantityTextTemplate = "{0} {1} have been spotted near this area!";
 				EnemyName = "Orcs";
 				break;
 		}

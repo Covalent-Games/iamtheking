@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour {
 	public int KingdomPopulation = 100;
 	public int Gold = 0;
 	public QuestBuilder QuestCreator;
+	public CastleUI KingdomCastleUI;
 
 	private GameManagerUI _ui;
 
@@ -31,6 +32,7 @@ public class GameManager : MonoBehaviour {
 		_ui = GetComponent<GameManagerUI>();
 		_ui.Manager = this;
 		QuestCreator = GetComponent<QuestBuilder>();
+		KingdomCastleUI = GetComponent<CastleUI>();
 	}
 
 	private void Start () {

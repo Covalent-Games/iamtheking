@@ -23,8 +23,17 @@ public class CameraInputController : MonoBehaviour {
 
 	void Update () {
 
-		PinchZoom();
-		HandleSingleTouch();
+		switch (Input.touchCount) {
+			case 1:
+				HandleSingleTouch();
+				break;
+			case 2:
+				PinchZoom();
+				if (Input.GetTouch(1).phase == TouchPhase.Ended) {
+					_previousPinchDistance = 0f;
+				}
+				break;
+		}
 		
 		if (CurrentSelectedObject != null && !_centering) {
 			//CenterCamOnSelected();
@@ -128,34 +137,28 @@ public class CameraInputController : MonoBehaviour {
 
 	private void HandleSingleTouch() {
 		
-		if (Input.touchCount == 1) {
-			if (!EventSystem.current.IsPointerOverGameObject()) {
-				Touch touch = Input.GetTouch(0);
-				RaycastHit2D hitInfo = Physics2D.Raycast(_camera.ScreenToWorldPoint(touch.position), Vector2.zero);
-				if (hitInfo) {
-					if (touch.phase == TouchPhase.Began) {
-						SelectObject(hitInfo, touch);
-					} else if (touch.phase == TouchPhase.Moved) {
-						FingerDrag(touch);
-					}
-				} 
-			}
+		Touch touch = Input.GetTouch(0);
+		if (!EventSystem.current.IsPointerOverGameObject(touch.fingerId)) {
+			RaycastHit2D hitInfo = Physics2D.Raycast(_camera.ScreenToWorldPoint(touch.position), Vector2.zero);
+			if (hitInfo) {
+				if (touch.phase == TouchPhase.Began) {
+					SelectObject(hitInfo, touch);
+				} else if (touch.phase == TouchPhase.Moved) {
+					FingerDrag(touch);
+				}
+			} 
 		}
 	}
 
 	private void PinchZoom() {
 		
-		if (Input.touchCount == 2) {
-			float currentPinchDistance = Vector2.Distance(Input.touches[0].position, Input.touches[1].position);
-			// Pinch distance is set to zero whenever there are not exactly 2 fingers on the screen.
-			if (_previousPinchDistance != 0f) {
-				float delta = _previousPinchDistance - currentPinchDistance;
-				_camera.orthographicSize =
-					Mathf.Clamp(_camera.orthographicSize + delta * Time.deltaTime * PinchSpeed, 5f, 15f);
-			}
-			_previousPinchDistance = currentPinchDistance;
-		} else {
-			_previousPinchDistance = 0f;
+		float currentPinchDistance = Vector2.Distance(Input.touches[0].position, Input.touches[1].position);
+		// Pinch distance is set to zero whenever there are not exactly 2 fingers on the screen.
+		if (_previousPinchDistance != 0f) {
+			float delta = _previousPinchDistance - currentPinchDistance;
+			_camera.orthographicSize =
+				Mathf.Clamp(_camera.orthographicSize + delta * Time.deltaTime * PinchSpeed, 5f, 15f);
 		}
+		_previousPinchDistance = currentPinchDistance;
 	}
 }

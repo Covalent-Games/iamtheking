@@ -8,8 +8,7 @@ public class CastleUI : MonoBehaviour, ISelectable {
 
 	public Hero SelectedHero;
 
-	private Castle _castle;
-	private Canvas _canvas;
+	private GameObject _canvas;
 
 	private Text _name;
 	private Text _heroesInTavern;
@@ -27,14 +26,11 @@ public class CastleUI : MonoBehaviour, ISelectable {
 	private Text _heroAllegiancePer;
 
 	private Button _startQuestButton;
+	private Image _heroHealthBar;
 
 	void Awake() {
 
-		_castle = GetComponent<Castle>();
-
-		_canvas = transform.FindChildRecursive("Info_Canvas").GetComponent<Canvas>();
-		_canvas.worldCamera = Camera.main;
-		_canvas.enabled = false;
+		_canvas = transform.FindChildRecursive("CastleUI_Canvas").gameObject;
 		// General UI
 		_name = transform.FindChildRecursive("Name_text").GetComponent<Text>();
 		_heroesInTavern = transform.FindChildRecursive("TavernTitle_Text").GetComponent<Text>();
@@ -51,6 +47,7 @@ public class CastleUI : MonoBehaviour, ISelectable {
 		_heroCunBar = transform.FindChildRecursive("CunningBar_Image").GetComponent<Image>();
 		_heroAllegianceBar = transform.FindChildRecursive("AllegianceBar_Image").GetComponent<Image>();
 		_heroAllegiancePer = transform.FindChildRecursive("AllegiancePercent_Text").GetComponent<Text>();
+		_heroHealthBar = transform.FindChildRecursive("HealthBar_Image").GetComponent<Image>();
 
 		// Add listening to the start quest button to reference the selected hero properly.
 		_startQuestButton = transform.FindChildRecursive("StartQuestCreator_Button").GetComponent<Button>();
@@ -65,6 +62,7 @@ public class CastleUI : MonoBehaviour, ISelectable {
 		_heroLevel.text = "Level: " + hero.Level;
 		_heroLevelGauge.fillAmount = hero.Exp / hero.ExpToLevel;
 		_heroName.text = hero.Name;
+		_heroHealthBar.fillAmount = (float)hero.Health / (float)hero.MaxHealth;
 		_heroStrBar.fillAmount = hero.Strength;
 		_heroWisBar.fillAmount = hero.Wisdom;
 		_heroCunBar.fillAmount = hero.Cunning;
@@ -74,19 +72,24 @@ public class CastleUI : MonoBehaviour, ISelectable {
 
 	public void Select() {
 
-		_canvas.enabled = true;
+		_canvas.SetActive(true);
 		if (GameManager.Instance.IdleHeroCount > 0) {
 			_heroesInTavern.text = "Heroes in the Tavern: " + GameManager.Instance.IdleHeroCount;
 		} else {
 			_heroesInTavern.text = "Your barkeeper isn't happy. He doesn't have any customers. But this is good news" +
 				" for your kingdom. All your heroes are out on quests!";
 		}
+		PopulateHeroList(_heroList);
+	}
+
+	public void PopulateHeroList(Transform content) {
+
 		GameObject heroIcon;
-		foreach(Hero hero in GameManager.Instance.Heroes.Values) {
+		foreach (Hero hero in GameManager.Instance.Heroes.Values) {
 			if (hero.Idle) {
 				heroIcon = Instantiate(_heroIconPrefab);
 				// Parent the heroIcon to the scrollview Content object, adding it to the scrollable objects.
-				heroIcon.transform.SetParent(_heroList);
+				heroIcon.transform.SetParent(content);
 
 				// This line is a workaround. If scaling issues happen with the icons try commenting this out.
 				heroIcon.transform.localScale = new Vector3(1, 1, 1);
@@ -116,6 +119,6 @@ public class CastleUI : MonoBehaviour, ISelectable {
 			_heroInfoCanvas.gameObject.SetActive(false);
 		}
 
-		_canvas.enabled = false;
+		_canvas.SetActive(false);
 	}
 }

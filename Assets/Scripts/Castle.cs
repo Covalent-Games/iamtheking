@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 
 
-public class Castle : MonoBehaviour {
+public class Castle : MonoBehaviour, ISelectable {
 
 	public int Integrity {
 		get {
@@ -24,12 +24,7 @@ public class Castle : MonoBehaviour {
 	}
 	private int _integrity;
 	private int _maxIntegrity = 100;
-	private CastleUI _castleUI;
 
-	void Awake() {
-
-		_castleUI = GetComponent<CastleUI>();
-	}
 
 	void Start() {
 
@@ -38,6 +33,16 @@ public class Castle : MonoBehaviour {
 
 	public void DisplayHeroOnUI(Hero hero) {
 
-		_castleUI.DisplayHero(hero);
+		GameManager.Instance.KingdomCastleUI.DisplayHero(hero);
+	}
+
+	public void Select() {
+
+		GameManager.Instance.KingdomCastleUI.Select();
+	}
+
+	public void Deselect() {
+
+		GameManager.Instance.KingdomCastleUI.Deselect();
 	}
 }
