@@ -4269,7 +4269,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   KingdomMap: {fileID: 0}
-  Villages: []
   IdleHeroCount: 0
   KingdomPopulation: 100
   Gold: 0

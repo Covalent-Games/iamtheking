@@ -1,16 +1,19 @@
 ﻿using UnityEngine;
+using Random = UnityEngine.Random;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections;
 
 public class GameManager : MonoBehaviour {
 
 	public static GameManager Instance;
+	public static float HeroSpeed = 2f;
 
 	public Map KingdomMap;
 	public Dictionary<Guid, Hero> Heroes = new Dictionary<Guid, Hero>();
 	public Dictionary<Guid, KingdomAlert> Alerts = new Dictionary<Guid, KingdomAlert>();
-	public List<Village> Villages = new List<Village>();
+	public Dictionary<Guid, Village> Villages = new Dictionary<Guid, Village>();
 	public int IdleHeroCount = 0;
 	public int KingdomPopulation = 100;
 	public int Gold = 0;
@@ -44,13 +47,28 @@ public class GameManager : MonoBehaviour {
 		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
 		hero.Allegiance = 1f;
 
-		InstantiateNewAlert(
-			new Vector2(UnityEngine.Random.Range(-12, 12), UnityEngine.Random.Range(-12, 12)));
+		StartCoroutine(SpawnAlertsRoutine());
 
+	}
+
+	private IEnumerator SpawnAlertsRoutine() {
+
+		Vector2 spawnLoc;
+		while (gameObject.activeSelf) {
+			yield return new WaitForSeconds(Random.Range(1f, 5f));
+			Debug.Log(Alerts.Count);
+			Debug.Log(Heroes.Count * 1.35f);
+			if (Alerts.Count < 1) {
+				spawnLoc = new Vector2(Random.Range(-12f, 12f), Random.Range(-12f, 12f));
+				InstantiateNewAlert(spawnLoc);
+				Debug.Log("NEW ALERT @ " + spawnLoc); 
+			}
+		}
 	}
 
 	private KingdomAlert InstantiateNewAlert(Vector2 vector2) {
 
+		//TODO: Generate some kind of indicator that a new alert has spawned.
 		GameObject newAlert = 
 			(GameObject)Instantiate(Map.Assets.EventAlertPrefab, vector2, Quaternion.identity);
 
@@ -59,6 +77,14 @@ public class GameManager : MonoBehaviour {
 		newAlert.SetActive(true);
 
 		return alert;
+	}
+
+	public void RemoveAlert(Guid id) {
+
+		KingdomAlert alert = Alerts[id];
+		alert.gameObject.SetActive(false);
+		Alerts.Remove(id);
+		Destroy(alert);
 	}
 
 	private void Update () {

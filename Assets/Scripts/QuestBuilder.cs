@@ -14,6 +14,8 @@ public class QuestBuilder: MonoBehaviour {
 	public static Guid HeroForQuest;
 	public static Guid AlertForQuest;
 
+	private QuestObject _questObject;
+
 	// UI Elements
 	private GameObject _questBuilderUI;
 	private Text _questTitle;
@@ -23,6 +25,7 @@ public class QuestBuilder: MonoBehaviour {
 	private Text _killQuantityText;
 	private Button _decreaseQuantityButton;
 	private Button _increaseQuantityButton;
+
 
 	private void Awake() {
 
@@ -77,9 +80,26 @@ public class QuestBuilder: MonoBehaviour {
 
 	public void StartQuest() {
 
+		// We need to either get all the parameters here to assign to the quest object
+		// and then assign to the hero, or we need to just assign the quest to the hero and send
+		// that hero on its way. The latter would likely be easier.
+
+		Hero hero = GameManager.Instance.Heroes[HeroForQuest];
+		KingdomAlert alert = GameManager.Instance.Alerts[AlertForQuest];
+
+		_questObject.Destination = alert.transform.position;
+		//TODO: This will need to be set dynamically
+		//TODO: Registering an event may work better than an enum.
+		_questObject.Goal = QuestObject.QuestType.Slayer;
+		//TODO: QuestObjects should be added to the list immediately or we won't be able to string tasks.
+		hero.Quests.Add(_questObject);
+		//TODO: This should go somewhere else.
+		hero.gameObject.SetActive(true);
+		hero.BeginQuest();
+
 		Debug.Log(string.Format("{0} {1} is on the way to save the day!",
 			GameManager.Instance.Alerts[AlertForQuest].AlertDescription,
-			GameManager.Instance.Heroes[HeroForQuest].Name));
+			hero.Name));
 		// This just does all the closing duties after we officially start the quest.
 		CancelQuestBuilder();
 	}
@@ -89,8 +109,10 @@ public class QuestBuilder: MonoBehaviour {
 		// Zero out selected objects.
 		AlertForQuest = new Guid();
 		HeroForQuest = new Guid();
+		_questObject = null;
 
 		_questBuilderUI.gameObject.SetActive(false);
+		_quantityAdjustContainer.gameObject.SetActive(false);
 	}
 
 	/// <summary>
@@ -99,6 +121,9 @@ public class QuestBuilder: MonoBehaviour {
 	/// <param name="hero">The assigned hero.</param>
 	/// <param name="alert">The assigned alert.</param>
 	private void StartQuestCreator(Hero hero, KingdomAlert alert) {
+
+		_questObject = new QuestObject(hero, alert);
+		Debug.Log("New blank quest object instantiated");
 
 		// Make the UI visible.
 		_questBuilderUI.SetActive(true);
@@ -112,6 +137,8 @@ public class QuestBuilder: MonoBehaviour {
 				_quantityAdjustContainer.gameObject.SetActive(true);
 				UpdateKillQuantityText(hero.Name, alert.Quantity, alert.EnemyName, 0);
 				_killQuantity.text = alert.Quantity.ToString();
+				_questObject.Quantity = alert.Quantity;
+				// Assign new delegates to increase and decrease buttons so they can reference hero and alert.
 				_decreaseQuantityButton.onClick.AddListener(delegate {
 					DecreaseKillQuantity(hero, alert);
 				});
@@ -126,12 +153,12 @@ public class QuestBuilder: MonoBehaviour {
 	// Increases the kill count and updates the text.
 	public void IncreaseKillQuantity(Hero hero, KingdomAlert alert) {
 
-		int quantity;
-		if (Int32.TryParse(_killQuantity.text, out quantity)) {
-			if (quantity < alert.Quantity) {
-				quantity++;
-				_killQuantity.text = (quantity).ToString();
-				UpdateKillQuantityText(hero.Name, quantity, alert.EnemyName, alert.Quantity - quantity);
+		if (Int32.TryParse(_killQuantity.text, out _questObject.Quantity)) {
+			if (_questObject.Quantity < alert.Quantity) {
+				_questObject.Quantity++;
+				_killQuantity.text = (_questObject.Quantity).ToString();
+				UpdateKillQuantityText(
+					hero.Name, _questObject.Quantity, alert.EnemyName, alert.Quantity - _questObject.Quantity);
 			}
 		}
 	}
@@ -139,12 +166,12 @@ public class QuestBuilder: MonoBehaviour {
 	// Decreases the kill count and updates the text.
 	public void DecreaseKillQuantity(Hero hero, KingdomAlert alert) {
 
-		int quantity;
-		if (Int32.TryParse(_killQuantity.text, out quantity)) {
-			if (quantity -1 > 0) {
-				quantity--;
-				_killQuantity.text = (quantity).ToString();
-				UpdateKillQuantityText(hero.Name, quantity, alert.EnemyName, alert.Quantity - quantity);
+		if (Int32.TryParse(_killQuantity.text, out _questObject.Quantity)) {
+			if (_questObject.Quantity -1 > 0) {
+				_questObject.Quantity--;
+				_killQuantity.text = (_questObject.Quantity).ToString();
+				UpdateKillQuantityText(
+					hero.Name, _questObject.Quantity, alert.EnemyName, alert.Quantity - _questObject.Quantity);
 			}
 		}
 	}

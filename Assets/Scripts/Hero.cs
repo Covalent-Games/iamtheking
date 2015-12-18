@@ -47,11 +47,62 @@ public class Hero : MonoBehaviour {
 		Exp = UnityEngine.Random.value + UnityEngine.Random.value;
 		Allegiance = UnityEngine.Random.value;
 	}
-	
-	void Update () {
-		
-		if (Quests.Count > 0) {
-			transform.position = Vector3.MoveTowards(transform.position, Quests[0].Destination, Time.deltaTime);
+
+	public void BeginQuest() {
+
+		StartCoroutine(ExecuteQuestRoutine());
+	}
+
+	private IEnumerator ExecuteQuestRoutine() {
+		Idle = false;
+		QuestObject currentQuest;
+		while (Quests.Count > 0) {
+			currentQuest = Quests[0];
+			Debug.Log(Name + " taking care of the " + currentQuest.Alert.AlertTitle);
+			// Move towards our current quest objective.
+			while (transform.position != currentQuest.Destination) {
+				transform.position = 
+					Vector3.MoveTowards(
+						transform.position,
+						currentQuest.Destination, 
+						Time.deltaTime * GameManager.HeroSpeed);
+				yield return null;
+			}
+			// Work towards completing the objective.
+			if (currentQuest.Alert != null) {
+				switch (currentQuest.Goal) {
+					case QuestObject.QuestType.Slayer:
+						while (currentQuest.Quantity > 0) {
+							yield return new WaitForSeconds(2f);
+							float winChance = Mathf.Clamp(Strength / currentQuest.Difficulty, .01f, .90f);
+							float roll = UnityEngine.Random.value;
+							if (roll <= winChance) {
+								Debug.Log(string.Format("{0} rolled a {1} against {2} and has slayn a foe!",
+									Name, roll, winChance));
+								currentQuest.Quantity--;
+								Exp++;
+							} else {
+								Debug.Log(Name + " has taken damage!");
+								Health--;
+							}
+						}
+						break;
+				}
+				GameManager.Instance.RemoveAlert(currentQuest.Alert.AlertID);
+			}
+			Quests.Remove(currentQuest);
+			yield return null;
 		}
+		//Return to the castle because all objectives are complete.
+		while (transform.position != Map.KingdomCastle.transform.position) {
+			transform.position =
+				Vector2.MoveTowards(
+					transform.position,
+					Map.KingdomCastle.transform.position,
+					Time.deltaTime * GameManager.HeroSpeed);
+			yield return null;
+		}
+		Idle = true;
+		gameObject.SetActive(false);
 	}
 }

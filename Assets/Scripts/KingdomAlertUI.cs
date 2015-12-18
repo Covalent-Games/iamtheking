@@ -55,7 +55,8 @@ public class KingdomAlertUI : MonoBehaviour, ISelectable {
 					string.Format(_alert.QuantityTextTemplate, _alert.Quantity, _alert.EnemyName);
 				_canvas.enabled = true;
 
-				Debug.Log(Mathf.Clamp(.02f / .99f, .01f, .90f));
+				// This is just a test of difficulty percentages.
+				//Debug.Log(Mathf.Clamp(.02f / .99f, .01f, .90f));
 				break;
 		}
 	}

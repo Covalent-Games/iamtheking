@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Linq;
 using System.Collections;
 using Random = UnityEngine.Random;
 
@@ -9,6 +10,7 @@ public class KingdomAlert : MonoBehaviour {
 	public string AlertTitle;
 	public string AlertDescription;
 	public int Quantity;
+	public float Difficulty;
 	public string QuantityTextTemplate;
 	public string EnemyName;
 	public AlertTypeEnum AlertType;
@@ -39,8 +41,9 @@ public class KingdomAlert : MonoBehaviour {
 				// A weighted random quantity based on 1% of the current population.
 				float wRand = Random.Range(0, population / 100f) + Random.Range(0, population / 100f);
 				Quantity = (int)Mathf.Clamp(wRand, 1, Mathf.Infinity) + 1;
-				QuantityTextTemplate = "{0} {1} have been spotted near this area!";
-				EnemyName = "Orcs";
+				QuantityTextTemplate = "{0} {1}s have been spotted near this area!";
+				EnemyName = "Orc";
+				Difficulty = UnityEngine.Random.value;
 				break;
 		}
 	}
