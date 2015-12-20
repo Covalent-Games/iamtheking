@@ -54,8 +54,10 @@ public class Hero : MonoBehaviour {
 	}
 
 	private IEnumerator ExecuteQuestRoutine() {
+
 		Idle = false;
 		QuestObject currentQuest;
+
 		while (Quests.Count > 0) {
 			currentQuest = Quests[0];
 			Debug.Log(Name + " taking care of the " + currentQuest.Alert.AlertTitle);
