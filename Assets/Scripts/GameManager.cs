@@ -42,9 +42,6 @@ public class GameManager : MonoBehaviour {
 
 		Hero hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
 		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
-		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
-		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
-		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
 		hero.Allegiance = 1f;
 
 		StartCoroutine(SpawnAlertsRoutine());
@@ -56,9 +53,7 @@ public class GameManager : MonoBehaviour {
 		Vector2 spawnLoc;
 		while (gameObject.activeSelf) {
 			yield return new WaitForSeconds(Random.Range(1f, 5f));
-			Debug.Log(Alerts.Count);
-			Debug.Log(Heroes.Count * 1.35f);
-			if (Alerts.Count < 1) {
+			if (Alerts.Count < 2) {
 				spawnLoc = new Vector2(Random.Range(-12f, 12f), Random.Range(-12f, 12f));
 				InstantiateNewAlert(spawnLoc);
 				Debug.Log("NEW ALERT @ " + spawnLoc); 

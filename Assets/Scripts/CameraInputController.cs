@@ -143,6 +143,7 @@ public class CameraInputController : MonoBehaviour {
 			if (hitInfo) {
 				if (touch.phase == TouchPhase.Began) {
 					SelectObject(hitInfo, touch);
+					Debug.Log(hitInfo.transform.name);
 				} else if (touch.phase == TouchPhase.Moved) {
 					FingerDrag(touch);
 				}
