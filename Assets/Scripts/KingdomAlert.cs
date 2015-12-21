@@ -14,6 +14,7 @@ public class KingdomAlert : MonoBehaviour {
 	public string QuantityTextTemplate;
 	public string EnemyName;
 	public AlertTypeEnum AlertType;
+	public Attributes UsedAttribute;
 
 	private KingdomAlertUI _ui;
 
@@ -38,6 +39,7 @@ public class KingdomAlert : MonoBehaviour {
 		int population = GameManager.Instance.KingdomPopulation;
 		switch (AlertType) {
 			case AlertTypeEnum.EnemySpotted:
+				UsedAttribute = Attributes.Strength;
 				// A weighted random quantity based on 1% of the current population.
 				float wRand = Random.Range(0, population / 100f) + Random.Range(0, population / 100f);
 				Quantity = (int)Mathf.Clamp(wRand, 1, Mathf.Infinity) + 1;

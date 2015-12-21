@@ -138,7 +138,8 @@ public class CameraInputController : MonoBehaviour {
 	private void HandleSingleTouch() {
 		
 		Touch touch = Input.GetTouch(0);
-		if (!EventSystem.current.IsPointerOverGameObject(touch.fingerId)) {
+		if (!EventSystem.current.IsPointerOverGameObject(touch.fingerId) || 
+			!EventSystem.current.IsPointerOverGameObject(0)) {
 			RaycastHit2D hitInfo = Physics2D.Raycast(_camera.ScreenToWorldPoint(touch.position), Vector2.zero);
 			if (hitInfo) {
 				if (touch.phase == TouchPhase.Began) {

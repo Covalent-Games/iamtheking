@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour {
 	public CastleUI KingdomCastleUI;
 
 	private GameManagerUI _ui;
+	private float _tickDuration = .5f;
 
 	private void Awake() {
 
@@ -45,14 +46,41 @@ public class GameManager : MonoBehaviour {
 		hero.Allegiance = 1f;
 
 		StartCoroutine(SpawnAlertsRoutine());
+		StartCoroutine(IncreasePopulationsRoutine());
+		StartCoroutine(IncreaseGoldRoutine());
 
+	}
+
+	private IEnumerator IncreaseGoldRoutine() {
+
+		int pop = 0;
+		int counter = 0;
+		while (gameObject.activeSelf) {
+			counter++;
+			pop += Mathf.RoundToInt(KingdomPopulation * 0.01f);
+			if (counter >= 10) {
+				Gold += pop;
+				pop = 0;
+				counter = 0;
+			}
+			yield return new WaitForSeconds(_tickDuration);
+		}
+	}
+
+	private IEnumerator IncreasePopulationsRoutine() {
+		
+		while (gameObject.activeSelf) {
+
+			yield return new WaitForSeconds(_tickDuration);
+			KingdomPopulation++;
+		}
 	}
 
 	private IEnumerator SpawnAlertsRoutine() {
 
 		Vector2 spawnLoc;
 		while (gameObject.activeSelf) {
-			yield return new WaitForSeconds(Random.Range(1f, 5f));
+			yield return new WaitForSeconds(Random.Range(1f * _tickDuration, 5f * _tickDuration));
 			if (Alerts.Count < 2) {
 				spawnLoc = new Vector2(Random.Range(-12f, 12f), Random.Range(-12f, 12f));
 				InstantiateNewAlert(spawnLoc);
@@ -76,10 +104,22 @@ public class GameManager : MonoBehaviour {
 
 	public void RemoveAlert(Guid id) {
 
-		KingdomAlert alert = Alerts[id];
-		alert.gameObject.SetActive(false);
-		Alerts.Remove(id);
-		Destroy(alert);
+		KingdomAlert alert;
+		if (Alerts.TryGetValue(id, out alert)) {
+			alert.gameObject.SetActive(false);
+			Alerts.Remove(id);
+			Destroy(alert); 
+		}
+	}
+
+	public void RemoveHero(Guid id) {
+
+		Hero hero;
+		if (Heroes.TryGetValue(id, out hero)) {
+			hero.gameObject.SetActive(false);
+			Heroes.Remove(id);
+			Destroy(hero);
+		}
 	}
 
 	private void Update () {

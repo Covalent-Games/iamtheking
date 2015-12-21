@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System;
+using Random = UnityEngine.Random;
 
 public class Hero : MonoBehaviour {
 
@@ -13,14 +14,40 @@ public class Hero : MonoBehaviour {
 	public List<QuestObject> Quests = new List<QuestObject>();
 	public Sprite UIImage;
 	public float Allegiance = 0.5f;
-	public int Health = 10;
 	public int MaxHealth = 10;
 	public float Strength = 0.1f;
 	public float Wisdom = 0.1f;
 	public float Cunning = 0.1f;
 	internal int Level = 1;
-	internal float Exp = 0f;
+	internal int Health	{
+		get	{
+			return _health;
+		}
+		set	{
+			_health = value;
+			if (_health <= 0) {
+				Die();
+			} else if (_health > MaxHealth) {
+				_health = MaxHealth;
+			}
+		}
+	}
+	internal float Exp{
+		get	{
+			return _exp;
+		}
+		set	{
+			_exp = value;
+			if (_exp >= ExpToLevel) {
+				LevelUp();
+			}
+		}
+	}
+
 	internal float ExpToLevel = 2f;
+
+	private float _exp = 0f;
+	private int _health = 10;
 
 	public enum ClassTypeEnum {
 		Warrior,
@@ -28,24 +55,81 @@ public class Hero : MonoBehaviour {
 		Rogue,
 	}
 
-	void Awake () {
+	void Awake() {
 
 		ID = Guid.NewGuid();
-		UIImage = GetComponent<SpriteRenderer>().sprite;
+		ClassType = (ClassTypeEnum)Random.Range(0, 3);
 		//TODO: Name generator;
-		string[] names = new string[5] {
+		string[] names = new string[7] {
 			"Hacker",
 			"Smacker",
 			"Wacker",
 			"Cracker",
 			"Bob",
+			"Sir Knight",
+			"McDuder",
 		};
-		Name = names[UnityEngine.Random.Range(0, 4)];
-		Strength = UnityEngine.Random.value;
-		Wisdom = UnityEngine.Random.value;
-		Cunning = UnityEngine.Random.value;
-		Exp = UnityEngine.Random.value + UnityEngine.Random.value;
-		Allegiance = UnityEngine.Random.value;
+		Name = names[Random.Range(0, 7)];
+		SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+
+		switch (ClassType) {
+			case ClassTypeEnum.Warrior:
+				Strength = Random.Range(.1f, .2f);
+				Wisdom = Random.Range(.02f, .08f);
+				Cunning = Random.Range(.03f, .1f);
+				MaxHealth = 10;
+				break;
+			case ClassTypeEnum.Mage:
+				Wisdom = Random.Range(.1f, .2f);
+				Strength = Random.Range(.02f, .08f);
+				Cunning = Random.Range(.03f, .1f);
+				spriteRenderer.sprite = Resources.Load<Sprite>("RawImages/icon_mage_wand_01");
+				MaxHealth = 8;
+				break;
+			case ClassTypeEnum.Rogue:
+				Cunning = Random.Range(.1f, .2f);
+				Wisdom = Random.Range(.02f, .08f);
+				Strength = Random.Range(.03f, .1f);
+				spriteRenderer.sprite = Resources.Load<Sprite>("RawImages/icon_rogue_daggers_01");
+				MaxHealth = 9;
+				break;
+		}
+		Health = MaxHealth;
+		UIImage = spriteRenderer.sprite;
+	}
+
+	public void Die() {
+
+		GameManager.Instance.RemoveHero(ID);
+	}
+
+	private void LevelUp() {
+
+		// These are all placeholder numbers.
+		switch (ClassType) {
+			case ClassTypeEnum.Warrior:
+				Strength += Random.Range(.1f, .2f);
+				Wisdom += Random.Range(.02f, .08f);
+				Cunning += Random.Range(.03f, .1f);
+				MaxHealth += 3;
+				break;
+			case ClassTypeEnum.Mage:
+				Wisdom += Random.Range(.1f, .2f);
+				Strength += Random.Range(.02f, .08f);
+				Cunning += Random.Range(.03f, .1f);
+				MaxHealth += 1;
+				break;
+			case ClassTypeEnum.Rogue:
+				Cunning += Random.Range(.1f, .2f);
+				Wisdom += Random.Range(.02f, .08f);
+				Strength += Random.Range(.03f, .1f);
+				MaxHealth += 2;
+				break;
+		}
+		Health = MaxHealth;
+		ExpToLevel += ExpToLevel;
+		Level++;
+		_exp = 0f;
 	}
 
 	public void BeginQuest() {
@@ -74,7 +158,8 @@ public class Hero : MonoBehaviour {
 			if (currentQuest.Alert != null) {
 				switch (currentQuest.Goal) {
 					case QuestObject.QuestType.Slayer:
-						while (currentQuest.Quantity > 0) {
+						// If hero finishes personal objective or the entire alert is cleared.
+						while (currentQuest.Quantity > 0 && currentQuest.Alert.Quantity > 0) {
 							yield return new WaitForSeconds(2f);
 							AttackEnemy(currentQuest);
 						} 
@@ -108,7 +193,7 @@ public class Hero : MonoBehaviour {
 		float winChance = Mathf.Clamp(Strength / currentQuest.Difficulty, .01f, .90f);
 		float roll = UnityEngine.Random.value;
 		if (roll <= winChance) {
-			Debug.Log(string.Format("{0} rolled a {1} against {2} and has slayn a foe!",
+			Debug.Log(string.Format("{0} rolled a {1} against {2} and has slain a foe!",
 				Name, roll, winChance));
 			// Update the currentQuest tracker, and also remove the enemy from the alert.
 			currentQuest.Quantity--;
