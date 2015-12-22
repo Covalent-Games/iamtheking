@@ -93,9 +93,9 @@ public class CastleUI : MonoBehaviour, ISelectable {
 
 				// This line is a workaround. If scaling issues happen with the icons try commenting this out.
 				heroIcon.transform.localScale = new Vector3(1, 1, 1);
-				// Update the icon's image to match the hero's image
+				// Update the icons image to match the heros image
 				heroIcon.GetComponent<Image>().sprite = hero.UIImage;
-				// Update the icon's banner/nametag to match the hero's name.
+				// Update the icons banner/nametag to match the heros name.
 				heroIcon.transform.FindChildRecursive("HeroName").GetComponent<Text>().text = hero.Name;
 
 				// Internal "syncing".
@@ -107,8 +107,8 @@ public class CastleUI : MonoBehaviour, ISelectable {
 
 	public void Deselect() {
 
-		// This may not be efficient for GC, but it's the cleanest way I can think of and the list 
-		// shouldn't have more than 5-10 at any time. Not worth caching the icons IMHO.
+		// This may not be efficient for GC, but its the cleanest way I can think of and the list 
+		// shouldnt have more than 5-10 at any time. Not worth caching the icons IMHO.
 
 		// Remove all the hero icons from the scrollview.
 		for (int i = 0; i < _heroList.childCount; i++) {

@@ -59,17 +59,8 @@ public class Hero : MonoBehaviour {
 
 		ID = Guid.NewGuid();
 		ClassType = (ClassTypeEnum)Random.Range(0, 3);
-		//TODO: Name generator;
-		string[] names = new string[7] {
-			"Hacker",
-			"Smacker",
-			"Wacker",
-			"Cracker",
-			"Bob",
-			"Sir Knight",
-			"McDuder",
-		};
-		Name = names[Random.Range(0, 7)];
+
+		Name = NameGenerator.New();
 		SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
 
 		switch (ClassType) {
@@ -108,19 +99,19 @@ public class Hero : MonoBehaviour {
 		// These are all placeholder numbers.
 		switch (ClassType) {
 			case ClassTypeEnum.Warrior:
-				Strength += Random.Range(.1f, .2f);
+				Strength += Random.Range(.09f, .15f);
 				Wisdom += Random.Range(.02f, .08f);
 				Cunning += Random.Range(.03f, .1f);
 				MaxHealth += 3;
 				break;
 			case ClassTypeEnum.Mage:
-				Wisdom += Random.Range(.1f, .2f);
+				Wisdom += Random.Range(.09f, .15f);
 				Strength += Random.Range(.02f, .08f);
 				Cunning += Random.Range(.03f, .1f);
 				MaxHealth += 1;
 				break;
 			case ClassTypeEnum.Rogue:
-				Cunning += Random.Range(.1f, .2f);
+				Cunning += Random.Range(.09f, .15f);
 				Wisdom += Random.Range(.02f, .08f);
 				Strength += Random.Range(.03f, .1f);
 				MaxHealth += 2;
@@ -188,6 +179,25 @@ public class Hero : MonoBehaviour {
 		gameObject.SetActive(false);
 	}
 
+	internal void PayHero(QuestObject quest, int recommendedReward) {
+
+		if (Allegiance > 0.95f) {
+			if (Random.value < 0.25f) {
+				Debug.Log("The hero has decided to run this one for free.");
+				return;
+			}
+		}
+
+		float reward = quest.GoldReward;
+		float percentage = reward / (recommendedReward * quest.Quantity);
+		if (percentage > 1f) {
+			Allegiance += percentage * 0.05f;
+		} else if (percentage < 1f) {
+			Allegiance -= (0.999f - percentage) * 0.2f;
+		}
+		GameManager.Instance.Gold -= quest.GoldReward;
+	}
+
 	private void AttackEnemy(QuestObject currentQuest) {
 
 		float winChance = Mathf.Clamp(Strength / currentQuest.Difficulty, .01f, .90f);
@@ -202,6 +212,9 @@ public class Hero : MonoBehaviour {
 		} else {
 			Debug.Log(Name + " has taken damage!");
 			Health--;
+			// 1/2 percent allegiance loss per damage taken. 
+			//TODO: This needs to scale down for higher health heroes.
+			Allegiance -= 0.005f;
 		}
 	}
 }

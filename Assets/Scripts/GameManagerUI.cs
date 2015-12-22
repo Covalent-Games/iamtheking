@@ -23,7 +23,7 @@ public class GameManagerUI : MonoBehaviour {
 
 	internal void UpdateIdleHeroCount(int idleHeroCount) {
 
-		// While this is normally bad practice, there shouldn't be more than 10-15 heroes ever.
+		// While this is normally bad practice, there shouldnt be more than 10-15 heroes ever.
 		Hero[] idleHeroes = Manager.Heroes.Values.Where(hero => hero.Idle).ToArray();
 		if (idleHeroes.Length != idleHeroCount) {
 			Manager.IdleHeroCount = idleHeroes.Length;

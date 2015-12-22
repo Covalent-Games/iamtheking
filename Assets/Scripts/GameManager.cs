@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour {
 
 		Hero hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
 		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
-		hero.Allegiance = 1f;
+		hero.Allegiance = 0.75f;
 
 		StartCoroutine(SpawnAlertsRoutine());
 		StartCoroutine(IncreasePopulationsRoutine());
@@ -124,7 +124,7 @@ public class GameManager : MonoBehaviour {
 
 	private void Update () {
 
-		// TODO If there's bad performance, make this event based.
+		// TODO If theres bad performance, make this event based.
 		_ui.UpdateIdleHeroCount(IdleHeroCount);
 		_ui.UpdateGold(Gold);
 		_ui.UpdatePopulation(KingdomPopulation);

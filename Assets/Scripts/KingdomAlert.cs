@@ -45,9 +45,38 @@ public class KingdomAlert : MonoBehaviour {
 				Quantity = (int)Mathf.Clamp(wRand, 1, Mathf.Infinity) + 1;
 				QuantityTextTemplate = "{0} {1}s have been spotted near this area!";
 				EnemyName = "Orc";
-				Difficulty = UnityEngine.Random.value;
+				Difficulty = GetDifficulty();
 				break;
 		}
+	}
+
+	private float GetDifficulty() {
+
+		float low = 1f;
+		float high = 0f;
+		Hero hero;
+		foreach (var kvPair in GameManager.Instance.Heroes) {
+			hero = kvPair.Value;
+			if (hero.Strength < low) {
+				low = hero.Strength;
+			}
+			if (hero.Wisdom < low) {
+				low = hero.Wisdom;
+			}
+			if (hero.Cunning < low) {
+				low = hero.Cunning;
+			}
+			if (hero.Strength < high) {
+				high = hero.Strength;
+			}
+			if (hero.Wisdom > high) {
+				high = hero.Wisdom;
+			}
+			if (hero.Cunning > high) {
+				high = hero.Cunning;
+			}
+		}
+		return Random.Range(low, high);
 	}
 
 	public void DeselectUI() {

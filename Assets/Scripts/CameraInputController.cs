@@ -108,7 +108,7 @@ public class CameraInputController : MonoBehaviour {
 		Vector3 offset = _camera.ScreenToWorldPoint(targetScreenPos) - tform.position;
 		Vector3 targetCamPos = _camera.transform.position - offset;
 		targetCamPos.z = _camera.transform.position.z;
-		// Reassign the camera zoom so it doesn't "snap" and look yucky.
+		// Reassign the camera zoom so it doesnt "snap" and look yucky.
 		_camera.orthographicSize = previousSize;
 
 		return targetCamPos;
@@ -124,7 +124,7 @@ public class CameraInputController : MonoBehaviour {
 
 		Vector3 pos = _camera.transform.position;
 		// Subtract the delta to get it appears the map is scrolling and not the camera. 
-		// The math foo is to scale scrolling speed based on zoom level, otherwise it's REALLY slow when zoomed all the way out.
+		// The math foo is to scale scrolling speed based on zoom level, otherwise its REALLY slow when zoomed all the way out.
 		pos = pos - (Vector3)touch.deltaPosition * Time.deltaTime * (ScrollSpeed + ((_camera.orthographicSize - 5f) / 10f));
 		pos.z = _camera.transform.position.z;
 		_camera.transform.position = pos;

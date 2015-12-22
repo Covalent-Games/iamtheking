@@ -15,6 +15,7 @@ public class QuestBuilder: MonoBehaviour {
 	public static Guid AlertForQuest;
 
 	private QuestObject _questObject;
+	private int _maxGoldReward;
 
 	// UI Elements
 	private GameObject _questBuilderUI;
@@ -88,6 +89,31 @@ public class QuestBuilder: MonoBehaviour {
 						  GameManager.Instance.Alerts[AlertForQuest]);
 	}
 
+	/// <summary>
+	/// Activates the quest creator UI.
+	/// </summary>
+	/// <param name="hero">The assigned hero.</param>
+	/// <param name="alert">The assigned alert.</param>
+	private void StartQuestCreator(Hero hero, KingdomAlert alert) {
+
+		_questObject = new QuestObject(hero, alert);
+		Debug.Log("New blank quest object instantiated");
+
+		// Make the UI visible.
+		_questBuilderUI.SetActive(true);
+
+		_questTitle.text = alert.AlertTitle;
+		_questDesc.text = alert.AlertDescription;
+		_maxGoldReward = GetRecommendedGoldReward(hero, alert) * 2;
+
+		switch (alert.AlertType) {
+			case KingdomAlert.AlertTypeEnum.EnemySpotted:
+				SetUpEnemySpottedUI(hero, alert);
+				break;
+		}
+
+	}
+
 	public void StartQuest() {
 
 		// We need to either get all the parameters here to assign to the quest object
@@ -102,12 +128,12 @@ public class QuestBuilder: MonoBehaviour {
 		Hero hero = GameManager.Instance.Heroes[HeroForQuest];
 		KingdomAlert alert = GameManager.Instance.Alerts[AlertForQuest];
 
-		GameManager.Instance.Gold -= _questObject.GoldReward;
+		hero.PayHero(_questObject, GetRecommendedGoldReward(hero, alert));
 		_questObject.Destination = alert.transform.position;
 		//TODO: This will need to be set dynamically
 		//TODO: Registering an event may work better than an enum.
 		_questObject.Goal = QuestObject.QuestType.Slayer;
-		//TODO: QuestObjects should be added to the list immediately or we won't be able to string tasks.
+		//TODO: QuestObjects should be added to the list immediately or we wont be able to string tasks.
 		hero.Quests.Add(_questObject);
 		//TODO: This should go somewhere else.
 		hero.gameObject.SetActive(true);
@@ -147,30 +173,6 @@ public class QuestBuilder: MonoBehaviour {
 		_quantityAdjustContainer.gameObject.SetActive(false);
 	}
 
-	/// <summary>
-	/// Activates the quest creator UI.
-	/// </summary>
-	/// <param name="hero">The assigned hero.</param>
-	/// <param name="alert">The assigned alert.</param>
-	private void StartQuestCreator(Hero hero, KingdomAlert alert) {
-
-		_questObject = new QuestObject(hero, alert);
-		Debug.Log("New blank quest object instantiated");
-
-		// Make the UI visible.
-		_questBuilderUI.SetActive(true);
-
-		_questTitle.text = alert.AlertTitle;
-		_questDesc.text = alert.AlertDescription;
-
-		switch (alert.AlertType) {
-			case KingdomAlert.AlertTypeEnum.EnemySpotted:
-				SetUpEnemySpottedUI(hero, alert);
-				break;
-		}
-
-	}
-
 	private int GetRecommendedGoldReward(Hero hero, KingdomAlert alert) {
 
 		float heroStat = 0f;
@@ -203,8 +205,11 @@ public class QuestBuilder: MonoBehaviour {
 
 		int goldPerKill;
 		if(Int32.TryParse(_goldPerAction.text, out goldPerKill)) {
-			_goldPerAction.text = (goldPerKill + 1).ToString();
-			UpdateTotalGoldReward();
+			// Never pay more than double for any quest.
+			if (goldPerKill < _maxGoldReward) {
+				_goldPerAction.text = (goldPerKill + 1).ToString();
+				UpdateTotalGoldReward(); 
+			}
 		}
 	}
 
