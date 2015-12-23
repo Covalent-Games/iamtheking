@@ -21,14 +21,12 @@ public class GameManagerUI : MonoBehaviour {
 		Gold = transform.FindChildRecursive("Gold_Text").GetComponent<Text>();
 	}
 
-	internal void UpdateIdleHeroCount(int idleHeroCount) {
+	internal void UpdateIdleHeroCount() {
 
 		// While this is normally bad practice, there shouldnt be more than 10-15 heroes ever.
 		Hero[] idleHeroes = Manager.Heroes.Values.Where(hero => hero.Idle).ToArray();
-		if (idleHeroes.Length != idleHeroCount) {
-			Manager.IdleHeroCount = idleHeroes.Length;
-			IdleHeroesText.text = "Idle Heroes: " + idleHeroCount.ToString();
-		}
+		Manager.IdleHeroCount = idleHeroes.Length;
+		IdleHeroesText.text = "Idle Heroes: " + Manager.IdleHeroCount.ToString();
 	}
 
 	internal void UpdateGold(int gold) {
