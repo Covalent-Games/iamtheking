@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour {
 	public CastleUI KingdomCastleUI;
 
 	private GameManagerUI _ui;
+	[SerializeField]
 	private float _tickDuration = .5f;
 
 	private void Awake() {
