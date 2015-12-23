@@ -138,8 +138,8 @@ public class CameraInputController : MonoBehaviour {
 	private void HandleSingleTouch() {
 		
 		Touch touch = Input.GetTouch(0);
-		if (!EventSystem.current.IsPointerOverGameObject(touch.fingerId) || 
-			!EventSystem.current.IsPointerOverGameObject(0)) {
+#if UNITY_EDITOR
+		if (!EventSystem.current.IsPointerOverGameObject()) {
 			RaycastHit2D hitInfo = Physics2D.Raycast(_camera.ScreenToWorldPoint(touch.position), Vector2.zero);
 			if (hitInfo) {
 				if (touch.phase == TouchPhase.Began) {
@@ -150,7 +150,21 @@ public class CameraInputController : MonoBehaviour {
 				}
 			} 
 		}
+#else
+		if (!EventSystem.current.IsPointerOverGameObject(touch.fingerId)) {
+			RaycastHit2D hitInfo = Physics2D.Raycast(_camera.ScreenToWorldPoint(touch.position), Vector2.zero);
+			if (hitInfo) {
+				if (touch.phase == TouchPhase.Began) {
+					SelectObject(hitInfo, touch);
+					Debug.Log(hitInfo.transform.name);
+				} else if (touch.phase == TouchPhase.Moved) {
+					FingerDrag(touch);
+				}
+			}
+		}
+#endif
 	}
+
 
 	private void PinchZoom() {
 		
