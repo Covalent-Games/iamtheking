@@ -126,7 +126,7 @@ public class GameManager : MonoBehaviour {
 	private void Update () {
 
 		// TODO If theres bad performance, make this event based.
-		_ui.UpdateIdleHeroCount(IdleHeroCount);
+		_ui.UpdateIdleHeroCount();
 		_ui.UpdateGold(Gold);
 		_ui.UpdatePopulation(KingdomPopulation);
 
