@@ -121,6 +121,8 @@ public class Hero : MonoBehaviour {
 		ExpToLevel += ExpToLevel;
 		Level++;
 		_exp = 0f;
+		NotificationManager.DisplayNotification(string.Format(
+			"{0} is now level {1}!", Name, Level), Color.yellow);
 	}
 
 	public void BeginQuest() {
