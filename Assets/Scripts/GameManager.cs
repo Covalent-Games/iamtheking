@@ -85,6 +85,7 @@ public class GameManager : MonoBehaviour {
 			if (Alerts.Count < 2) {
 				spawnLoc = new Vector2(Random.Range(-12f, 12f), Random.Range(-12f, 12f));
 				InstantiateNewAlert(spawnLoc);
+				NotificationManager.DisplayNotification("There is trouble in the kingdom!", Color.red);
 				Debug.Log("NEW ALERT @ " + spawnLoc); 
 			}
 		}

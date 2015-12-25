@@ -15,6 +15,7 @@ public class GameManagerUI : MonoBehaviour {
 
 	void Awake() {
 
+
 		CastleIntegrityBar = transform.FindChildRecursive("CastleIntegrity_Bar").GetComponent<Image>();
 		IdleHeroesText = transform.FindChildRecursive("IdleHeroes_Text").GetComponent<Text>();
 		KingdomPopulation = transform.FindChildRecursive("KingdomPop_Text").GetComponent<Text>();
