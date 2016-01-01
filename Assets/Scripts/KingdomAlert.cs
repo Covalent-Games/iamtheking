@@ -71,7 +71,7 @@ public class KingdomAlert : MonoBehaviour {
 		}
 	}
 
-	private TimeSpan GetTimerDuration(int minSeconds=5, int maxSeconds=10) {
+	private TimeSpan GetTimerDuration(int minSeconds=60, int maxSeconds=300) {
 
 		return TimeSpan.FromSeconds(Random.Range(minSeconds, maxSeconds));
 	}
@@ -144,19 +144,30 @@ public class KingdomAlert : MonoBehaviour {
 		
 		switch (AlertType) {
 			case AlertTypeEnum.EnemySpotted:
-				DoEnemySpottedBadThing();
+				DoEnemySpottedFailure();
 				break;
 		}
 	}
 
-	private void DoEnemySpottedBadThing() {
+	private void DoEnemySpottedFailure() {
 
 		// On easier difficulties the alert will be close by. Harder it will be farther away.
 		//TODO: Keep this on the map.
 		Vector3 newPos = new Vector2(Random.Range(-4f, 4f), Random.Range(-4f, 4f)) * Mathf.Max(1f, Difficulty);
 		newPos += transform.position;
-		//TODO: This should be the nearest village OR castle, whichever is closest.
-		Vector3 vectorToNearestSettlement = Map.KingdomCastle.transform.position - newPos;
+		Transform closestSettlement = Map.KingdomCastle.transform;
+		float shortestDistance = Vector3.Distance(newPos, closestSettlement.position);
+		foreach (var kvPair in GameManager.Instance.Villages) {
+			float currentDistance = Vector3.Distance(newPos, kvPair.Value.transform.position);
+			if (currentDistance < shortestDistance) {
+				closestSettlement = kvPair.Value.transform;
+				shortestDistance = currentDistance;
+			}
+		}
+		if (closestSettlement == Map.KingdomCastle.transform) {
+			Map.KingdomCastle.Integrity -= Difficulty / 2f;
+		}
+		Vector3 vectorToNearestSettlement = closestSettlement.position - newPos;
 		vectorToNearestSettlement.Normalize();
 		// Move the new position towards the closest village/castle.
 		newPos += (vectorToNearestSettlement * 2.5f);

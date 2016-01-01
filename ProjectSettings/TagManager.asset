@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Castle
   - Hero
+  - AlertContainer
   layers:
   - Default
   - TransparentFX

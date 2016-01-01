@@ -6,7 +6,7 @@ using System;
 
 public class Castle : MonoBehaviour, ISelectable {
 
-	public int Integrity {
+	public float Integrity {
 		get {
 			return _integrity;
 		}
@@ -18,12 +18,12 @@ public class Castle : MonoBehaviour, ISelectable {
 			if (_integrity < 0) {
 				GameManager.GameOver();
 			}
-			GameManager.Instance.UpdateCastleIntegrityUI(_integrity, _maxIntegrity);
+			GameManager.Instance.UpdateCastleIntegrityUI(_integrity);
 		}
 
 	}
-	private int _integrity;
-	private int _maxIntegrity = 100;
+	private float _integrity;
+	private float _maxIntegrity = 1f;
 
 
 	void Start() {

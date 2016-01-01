@@ -98,6 +98,17 @@ public class CameraInputController : MonoBehaviour {
 		_centering = false;
 	}
 
+	public void CenterOnObject (Transform tform) {
+
+		StartCoroutine(CenterSelectableUIRoutine(tform));
+		ISelectable iSelectable = tform.GetComponent<ISelectable>();
+		if (iSelectable != null) {
+			iSelectable.Select();
+		}
+		CurrentSelectedObject = iSelectable;
+
+	}
+
 	/// <summary>
 	/// Calculates a position correctly aligned with the provided transform's position.
 	/// </summary>

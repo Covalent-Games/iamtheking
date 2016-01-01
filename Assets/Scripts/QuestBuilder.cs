@@ -53,19 +53,22 @@ public class QuestBuilder: MonoBehaviour {
 	public void SelectHeroForNewQuest(CastleUI ui) {
 
 		ui.Deselect();
-		GameManager.Instance.PauseForMenu(false);
-		StartCoroutine(GameManagerUI.ZoomOutAndCenterRoutine());
+		StartCoroutine(CameraController.ZoomOutAndCenterRoutine());
 
 		SelectingAlertForQuest = true;
 		HeroForQuest = ui.SelectedHero.ID;
+
+		if (AlertForQuest != Guid.Empty) {
+			AssignHeroToAlert(GameManager.Instance.Heroes[HeroForQuest]);
+		}
 
 	}
 
 	public void SelectAlertForQuest(KingdomAlert alert) {
 
 		alert.DeselectUI();
-		GameManager.Instance.PauseForMenu(false);
-		StartCoroutine(GameManagerUI.ZoomOutAndCenterRoutine());
+		//GameManager.Instance.PauseForMenu(false);
+		CameraController.CenterOnObject(Map.KingdomCastle.transform);
 
 		SelectingHeroForQuest = true;
 		AlertForQuest = alert.AlertID;
@@ -83,7 +86,27 @@ public class QuestBuilder: MonoBehaviour {
 
 		AlertForQuest = alert.AlertID;
 		alert.DeselectUI();
-		StartCoroutine(GameManagerUI.ZoomOutAndCenterRoutine());
+		StartCoroutine(CameraController.ZoomOutAndCenterRoutine());
+		SelectingAlertForQuest = false;
+		SelectingHeroForQuest = false;
+
+		StartQuestCreator(GameManager.Instance.Heroes[HeroForQuest],
+						  GameManager.Instance.Alerts[AlertForQuest]);
+	}
+
+	/// <summary>
+	/// This will start the quest creator UI if both Hero and Alert are assigned.
+	/// </summary>
+	/// <param name="alert">The alert the hero is being assigned to.</param>
+	public void AssignHeroToAlert(Hero hero) {
+
+		if (AlertForQuest == null) {
+			Debug.LogException(new Exception("An Alert must be assigned before initiating a quest."));
+		}
+
+		HeroForQuest = hero.ID;
+		GameManager.Instance.KingdomCastleUI.Deselect();
+		StartCoroutine(CameraController.ZoomOutAndCenterRoutine());
 		SelectingAlertForQuest = false;
 		SelectingHeroForQuest = false;
 
