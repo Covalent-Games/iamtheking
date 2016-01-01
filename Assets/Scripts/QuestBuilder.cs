@@ -53,6 +53,7 @@ public class QuestBuilder: MonoBehaviour {
 	public void SelectHeroForNewQuest(CastleUI ui) {
 
 		ui.Deselect();
+		GameManager.Instance.PauseForMenu(false);
 		StartCoroutine(GameManagerUI.ZoomOutAndCenterRoutine());
 
 		SelectingAlertForQuest = true;
@@ -63,6 +64,7 @@ public class QuestBuilder: MonoBehaviour {
 	public void SelectAlertForQuest(KingdomAlert alert) {
 
 		alert.DeselectUI();
+		GameManager.Instance.PauseForMenu(false);
 		StartCoroutine(GameManagerUI.ZoomOutAndCenterRoutine());
 
 		SelectingHeroForQuest = true;
@@ -73,7 +75,7 @@ public class QuestBuilder: MonoBehaviour {
 	/// This will start the quest creator UI if both Hero and Alert are assigned.
 	/// </summary>
 	/// <param name="alert">The alert the hero is being assigned to.</param>
-	public void AssignHeroToAlert(KingdomAlert alert) {
+	public void AssignAlertToHero(KingdomAlert alert) {
 
 		if (HeroForQuest == null) {
 			Debug.LogException(new Exception("A hero must be assigned before initiating a quest."));

@@ -5,7 +5,18 @@ using Random = UnityEngine.Random;
 
 internal class NameGenerator {
 
-	#region Name Lists
+	#region Enemy name lists
+	private static List<string> EnemyNames = new List<string>() {
+		"Orc",
+		"Goblin",
+		"Spider",
+		"Troll",
+		"Warlock",
+		"Zombie",
+		"Skeleton",
+	};
+	#endregion
+	#region Hero Name Lists
 	private static List<string> PrefixList = new List<string>() {
 		"",
 		"",
@@ -17,6 +28,17 @@ internal class NameGenerator {
 	};
 	private static List<string> SuffixList = new List<string>() {
 		"Jr",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
 		"",
 		"",
 		"",
@@ -169,13 +191,18 @@ internal class NameGenerator {
 		"Tinhin",
 	};
 	#endregion
-	internal static string New() {
+	internal static string NewHeroName() {
 
 		string prefix = GetPrefix();
 		string name = GetName();
 		string suffix = GetSuffix();
 
 		return prefix + name + suffix;
+	}
+
+	internal static string NewEnemyName() {
+
+		return EnemyNames[Random.Range(0, EnemyNames.Count)];
 	}
 
 	private static string GetSuffix() {

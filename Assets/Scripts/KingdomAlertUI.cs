@@ -41,7 +41,7 @@ public class KingdomAlertUI : MonoBehaviour, ISelectable {
 			_actionButton.transform.FindChildRecursive("Text").GetComponent<Text>().text =
 				"Assign " + hero.Name + " to this alert?";
 			_actionButton.onClick.AddListener(
-				delegate { GameManager.Instance.QuestCreator.AssignHeroToAlert(_alert); });
+				delegate { GameManager.Instance.QuestCreator.AssignAlertToHero(_alert); });
 		} else {
 			_actionButton.transform.FindChildRecursive("Text").GetComponent<Text>().text =
 				"Assign a hero to this alert?";

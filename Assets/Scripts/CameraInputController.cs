@@ -59,13 +59,16 @@ public class CameraInputController : MonoBehaviour {
 				// If the object we touched was already selected.
 				if (CurrentSelectedObject == selected) {
 					DeselectObject(selected);
+					GameManager.Instance.PauseForMenu(false);
 				} else {
 					if (CurrentSelectedObject != null) {
-						DeselectObject(CurrentSelectedObject); 
+						DeselectObject(CurrentSelectedObject);
+						GameManager.Instance.PauseForMenu(false);
 					}
 					selected.Select();
 					StartCoroutine(CenterSelectableUIRoutine(hitinfo.transform));
 					CurrentSelectedObject = selected;
+					GameManager.Instance.PauseForMenu(true);
 				}
 			} 
 		}			
@@ -95,6 +98,11 @@ public class CameraInputController : MonoBehaviour {
 		_centering = false;
 	}
 
+	/// <summary>
+	/// Calculates a position correctly aligned with the provided transform's position.
+	/// </summary>
+	/// <param name="tform">The transform to align to.</param>
+	/// <returns>The calculated aligned position.</returns>
 	private Vector3 GetCameraCenteringPos(Transform tform) {
 
 		// We need to calculate screen position based on a fully zoomed in camera or the math gets complicated.
@@ -132,6 +140,7 @@ public class CameraInputController : MonoBehaviour {
 		// Deselect any selected object.
 		if (CurrentSelectedObject != null) {
 			DeselectObject(CurrentSelectedObject);
+			GameManager.Instance.PauseForMenu(false);
 		}
 	}
 
