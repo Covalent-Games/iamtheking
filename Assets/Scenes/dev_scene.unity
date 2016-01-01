@@ -774,6 +774,7 @@ GameObject:
   - 124: {fileID: 202674546}
   - 81: {fileID: 202674545}
   - 114: {fileID: 202674544}
+  - 114: {fileID: 202674550}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -861,6 +862,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!114 &202674550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 202674543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad133a4b3840de149930cdf3cf72847a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &229901152
 GameObject:
   m_ObjectHideFlags: 0
@@ -2799,6 +2811,33 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 979902282}
+--- !u!1 &1002240380
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1002240381}
+  m_Layer: 0
+  m_Name: AlertContainer
+  m_TagString: AlertContainer
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1002240381
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1002240380}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.06397915, y: 3.50701499, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
 --- !u!1 &1028539855
 GameObject:
   m_ObjectHideFlags: 0
@@ -4627,12 +4666,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb31fe8df753e294d8bdb1d72e455546, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  KingdomMap: {fileID: 0}
-  IdleHeroCount: 0
   KingdomPopulation: 100
   Gold: 0
+  MaxPopPerTick: 2
+  KingdomMap: {fileID: 0}
+  IdleHeroCount: 0
   QuestCreator: {fileID: 0}
   KingdomCastleUI: {fileID: 0}
+  AlertAllegianceModifier: .5
   _tickDuration: 2
 --- !u!4 &1658465979
 Transform:

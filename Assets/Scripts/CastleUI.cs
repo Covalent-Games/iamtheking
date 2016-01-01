@@ -77,12 +77,19 @@ public class CastleUI : MonoBehaviour, ISelectable {
 			_heroesInTavern.text = "Heroes in the Tavern: " + GameManager.Instance.IdleHeroCount;
 		} else {
 			_heroesInTavern.text = "Your barkeeper isn't happy. He doesn't have any customers. But this is good news" +
-				" for your kingdom. All your heroes are out on quests!";
+				" for your kingdom. All your heroes are out on quests! However, you should consider recruiting more." +
+				" [Coming Soon]";
 		}
 		PopulateHeroList(_heroList);
 	}
 
 	public void PopulateHeroList(Transform content) {
+
+		//TODO: There's a bug associated with this... DON'T FORGET TO FIX IT!
+		// Remove all the hero icons from the scrollview.
+		for (int i = 0; i < _heroList.childCount; i++) {
+			Destroy(_heroList.GetChild(i).gameObject);
+		}
 
 		GameObject heroIcon;
 		foreach (Hero hero in GameManager.Instance.Heroes.Values) {
@@ -109,11 +116,6 @@ public class CastleUI : MonoBehaviour, ISelectable {
 
 		// This may not be efficient for GC, but its the cleanest way I can think of and the list 
 		// shouldnt have more than 5-10 at any time. Not worth caching the icons IMHO.
-
-		// Remove all the hero icons from the scrollview.
-		for (int i = 0; i < _heroList.childCount; i++) {
-			Destroy(_heroList.GetChild(i).gameObject);
-		}
 
 		if (SelectedHero != null) {
 			_heroInfoCanvas.gameObject.SetActive(false);

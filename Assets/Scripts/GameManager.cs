@@ -10,16 +10,25 @@ public class GameManager : MonoBehaviour {
 	public static GameManager Instance;
 	public static float HeroSpeed = 2f;
 
-	public Map KingdomMap;
 	public Dictionary<Guid, Hero> Heroes = new Dictionary<Guid, Hero>();
 	public Dictionary<Guid, KingdomAlert> Alerts = new Dictionary<Guid, KingdomAlert>();
 	public Dictionary<Guid, Village> Villages = new Dictionary<Guid, Village>();
-	public int IdleHeroCount = 0;
 	public int KingdomPopulation = 100;
 	public int Gold = 0;
-	public QuestBuilder QuestCreator;
-	public CastleUI KingdomCastleUI;
+	public int MaxPopPerTick = 2;
 
+	[HideInInspector]
+	public Map KingdomMap;
+	[HideInInspector]
+	public int IdleHeroCount = 0;
+	[HideInInspector]
+	public QuestBuilder QuestCreator;
+	[HideInInspector]
+	public CastleUI KingdomCastleUI;
+	[Range(0f, 1f)]
+	public float AlertAllegianceModifier = 0.5f;
+
+	private Transform _alertContainer;
 	private GameManagerUI _ui;
 	[SerializeField]
 	private float _tickDuration = .5f;
@@ -38,21 +47,13 @@ public class GameManager : MonoBehaviour {
 		_ui.Manager = this;
 		QuestCreator = GetComponent<QuestBuilder>();
 		KingdomCastleUI = GetComponent<CastleUI>();
+		_alertContainer = GameObject.FindGameObjectWithTag("AlertContainer").transform;
 	}
 
 	private void Start () {
 
 		Hero hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
 		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
-		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
-		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
-		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
-		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
-		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
-		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
-		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
-		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
-		hero.Allegiance = 0.75f;
 
 		StartCoroutine(SpawnAlertsRoutine());
 		StartCoroutine(IncreasePopulationsRoutine());
@@ -79,9 +80,11 @@ public class GameManager : MonoBehaviour {
 	private IEnumerator IncreasePopulationsRoutine() {
 		
 		while (gameObject.activeSelf) {
-
 			yield return new WaitForSeconds(_tickDuration);
-			KingdomPopulation++;
+			// Decrease population if below 50%
+			float modifier = (Map.KingdomCastle.Integrity - 0.5f) * 2;
+			KingdomPopulation += Mathf.RoundToInt(MaxPopPerTick * modifier);
+			//Debug.Log(string.Format("I: {0} -- P: {1}", Map.KingdomCastle.Integrity, KingdomPopulation));
 		}
 	}
 
@@ -89,9 +92,9 @@ public class GameManager : MonoBehaviour {
 
 		Vector2 spawnLoc;
 		while (gameObject.activeSelf) {
-			yield return new WaitForSeconds(Random.Range(1f * _tickDuration, 5f * _tickDuration));
-			if (Alerts.Count < 1) {
-				spawnLoc = new Vector2(Random.Range(-12f, 12f), Random.Range(-12f, 12f));
+			yield return new WaitForSeconds(Random.Range(1.5f * _tickDuration, 10f * _tickDuration));
+			if (Alerts.Count < Mathf.RoundToInt(KingdomPopulation / 100f)) {
+				spawnLoc = new Vector2(Random.Range(-13f, 13f), Random.Range(-13f, 13f));
 				InstantiateNewAlert(spawnLoc);
 				NotificationManager.DisplayNotification("There is trouble in the kingdom!", Color.red);
 				Debug.Log("NEW ALERT @ " + spawnLoc); 
@@ -106,7 +109,10 @@ public class GameManager : MonoBehaviour {
 			(GameObject)Instantiate(Map.Assets.EventAlertPrefab, vector2, Quaternion.identity);
 
 		KingdomAlert alert = newAlert.GetComponent<KingdomAlert>();
-		Alerts.Add(alert.AlertID, alert);
+		if (!Alerts.ContainsValue(alert)) {
+			Alerts.Add(alert.AlertID, alert);
+		}
+
 		newAlert.SetActive(true);
 
 		return alert;
@@ -118,7 +124,7 @@ public class GameManager : MonoBehaviour {
 		if (Alerts.TryGetValue(id, out alert)) {
 			alert.gameObject.SetActive(false);
 			Alerts.Remove(id);
-			Destroy(alert); 
+			Destroy(alert.gameObject); 
 		}
 	}
 
@@ -139,11 +145,14 @@ public class GameManager : MonoBehaviour {
 		_ui.UpdateGold(Gold);
 		_ui.UpdatePopulation(KingdomPopulation);
 
+		int[] array = Time.time.ToString().Select(c => (int)char.GetNumericValue(c)).ToArray();
+		//Debug.Log(array[array[0]]);
+
 	}
 
-	public void UpdateCastleIntegrityUI(int current, int max) {
+	public void UpdateCastleIntegrityUI(float current) {
 
-		_ui.CastleIntegrityBar.fillAmount = (float)current / (float)max;
+		_ui.CastleIntegrityBar.fillAmount = current;
 	}
 
 	/// <summary>
@@ -180,6 +189,7 @@ public class GameManager : MonoBehaviour {
 
 	internal static void GameOver() {
 
-		throw new NotImplementedException();
+		// Temporary "End Game"
+		Map.KingdomCastle.gameObject.SetActive(false);
 	}
 }
