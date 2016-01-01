@@ -44,6 +44,14 @@ public class GameManager : MonoBehaviour {
 
 		Hero hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
 		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
+		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
+		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
+		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
+		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
+		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
+		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
+		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
+		hero = InstantiateNewHero(Map.KingdomCastle.transform.position);
 		hero.Allegiance = 0.75f;
 
 		StartCoroutine(SpawnAlertsRoutine());
@@ -82,7 +90,7 @@ public class GameManager : MonoBehaviour {
 		Vector2 spawnLoc;
 		while (gameObject.activeSelf) {
 			yield return new WaitForSeconds(Random.Range(1f * _tickDuration, 5f * _tickDuration));
-			if (Alerts.Count < 2) {
+			if (Alerts.Count < 1) {
 				spawnLoc = new Vector2(Random.Range(-12f, 12f), Random.Range(-12f, 12f));
 				InstantiateNewAlert(spawnLoc);
 				NotificationManager.DisplayNotification("There is trouble in the kingdom!", Color.red);
@@ -91,7 +99,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	private KingdomAlert InstantiateNewAlert(Vector2 vector2) {
+	public KingdomAlert InstantiateNewAlert(Vector2 vector2) {
 
 		//TODO: Generate some kind of indicator that a new alert has spawned.
 		GameObject newAlert = 
@@ -126,7 +134,7 @@ public class GameManager : MonoBehaviour {
 
 	private void Update () {
 
-		// TODO If theres bad performance, make this event based.
+		// TODO If there's bad performance, make this event based.
 		_ui.UpdateIdleHeroCount();
 		_ui.UpdateGold(Gold);
 		_ui.UpdatePopulation(KingdomPopulation);
@@ -155,6 +163,19 @@ public class GameManager : MonoBehaviour {
 		heroGO.gameObject.SetActive(active);
 
 		return hero;
+	}
+
+	/// <summary>
+	/// /// <summary>
+	/// This will start or stop all alert timers. It should only be used to "pause" them for user quality-of-life.
+	/// <param name="toggle"></param>
+	public void PauseForMenu(bool toggle) {
+
+		//if (toggle) {
+		//	Time.timeScale = 0f; 
+		//} else {
+		//	Time.timeScale = 1f;
+		//}
 	}
 
 	internal static void GameOver() {

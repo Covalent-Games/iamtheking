@@ -60,7 +60,7 @@ public class Hero : MonoBehaviour {
 		ID = Guid.NewGuid();
 		ClassType = (ClassTypeEnum)Random.Range(0, 3);
 
-		Name = NameGenerator.New();
+		Name = NameGenerator.NewHeroName();
 		SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
 
 		switch (ClassType) {
@@ -149,6 +149,7 @@ public class Hero : MonoBehaviour {
 			} 
 			// Work towards completing the objective.
 			if (currentQuest.Alert != null) {
+				currentQuest.Alert.HeroesAtAlert++;
 				switch (currentQuest.Goal) {
 					case QuestObject.QuestType.Slayer:
 						// If hero finishes personal objective or the entire alert is cleared.
@@ -158,6 +159,7 @@ public class Hero : MonoBehaviour {
 						} 
 						break;
 				}
+				currentQuest.Alert.HeroesAtAlert--;
 				if (currentQuest.Alert.Quantity <= 0) {
 					GameManager.Instance.RemoveAlert(currentQuest.Alert.AlertID); 
 				}
