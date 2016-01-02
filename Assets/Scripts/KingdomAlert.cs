@@ -23,6 +23,7 @@ public class KingdomAlert : MonoBehaviour {
 
 	private Text _timer;
 	private KingdomAlertUI _ui;
+	private Sprite _goodAlertSprite;
 
 	private void Awake() {
 
@@ -35,7 +36,6 @@ public class KingdomAlert : MonoBehaviour {
 
 		SetRandomAlertType();
 		SetValuesByAlertType();
-		StartCoroutine(UpdateTimerRoutine());
 	}
 
 	private void SetRandomAlertType() {
@@ -54,21 +54,43 @@ public class KingdomAlert : MonoBehaviour {
 			throw new Exception("The alert does not have a set AlertType!");
 		}
 
-		int population = GameManager.Instance.KingdomPopulation;
 		switch (AlertType) {
 			case AlertTypeEnum.EnemySpotted:
-				EnemyName = NameGenerator.NewEnemyName();
-				Difficulty = GetDifficulty();
-				AlertTitle = EnemyName +" Raiding Party";
-				AlertDescription = EnemyName + "s are raiding the lands of your kingdom!";
-				UsedAttribute = Attributes.Strength;
-				// A weighted random quantity based on 1% of the current population.
-				float wRand = Random.Range(0, population / 100f) + Random.Range(0, population / 100f);
-				Quantity = (int)Mathf.Clamp(wRand, 1, Mathf.Infinity) + 1;
-				QuantityTextTemplate = "{0} {1}s have been spotted near this area!";
-				Duration = GetTimerDuration();
+				SetUpEnemySpottedAlert(GameManager.Instance.KingdomPopulation);
+				break;
+			case AlertTypeEnum.NewCitySite:
+				SetUpNewCitySite();
 				break;
 		}
+	}
+
+	private void SetUpNewCitySite() {
+
+		_timer.transform.parent.gameObject.SetActive(false);
+		GetComponent<SpriteRenderer>().color = new Color(0f, 160/255f, 1f);
+		AlertTitle = "Possible New City Site!";
+		AlertDescription = "Kimgdom Excavators have located what they believe to be prime lands" +
+			" for a new city. The King should choose the best to found the kingdom's newest city!";
+		UsedAttribute = Attributes.Wisdom;
+		// Number of sites in the area.
+		Quantity = Random.Range(1, 4);
+		QuantityTextTemplate = "{0} {1} been discovered and await the King's choice before breaking ground.";
+	}
+
+	private void SetUpEnemySpottedAlert(int population) {
+
+		EnemyName = NameGenerator.NewEnemyName();
+		Difficulty = GetDifficulty();
+		AlertTitle = EnemyName + " Raiding Party";
+		AlertDescription = EnemyName + "s are raiding the lands of your kingdom!";
+		UsedAttribute = Attributes.Strength;
+		// A weighted random quantity based on 1% of the current population.
+		float wRand = Random.Range(0, population / 100f) + Random.Range(0, population / 100f);
+		Quantity = (int)Mathf.Clamp(wRand, 1, Mathf.Infinity) + 1;
+		QuantityTextTemplate = "{0}{1}s have been spotted near this area!";
+		Duration = GetTimerDuration();
+		StartCoroutine(UpdateTimerRoutine());
+		_timer.transform.parent.gameObject.SetActive(true);
 	}
 
 	private TimeSpan GetTimerDuration(int minSeconds=60, int maxSeconds=300) {
@@ -120,6 +142,7 @@ public class KingdomAlert : MonoBehaviour {
 
 		None,
 		EnemySpotted,
+		NewCitySite,
 	}
 
 	private IEnumerator UpdateTimerRoutine() {

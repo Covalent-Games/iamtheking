@@ -35,27 +35,41 @@ public class KingdomAlertUI : MonoBehaviour, ISelectable {
 		Hero hero;
 		GameManager.Instance.Heroes.TryGetValue(QuestBuilder.HeroForQuest, out hero);
 
-		// Set the button text based on context.
-		// This is true if a hero has already been selected.
-		if (QuestBuilder.SelectingAlertForQuest) {
-			_actionButton.transform.FindChildRecursive("Text").GetComponent<Text>().text =
-				"Assign " + hero.Name + " to this alert?";
-			_actionButton.onClick.AddListener(
-				delegate { GameManager.Instance.QuestCreator.AssignAlertToHero(_alert); });
-		} else {
-			_actionButton.transform.FindChildRecursive("Text").GetComponent<Text>().text =
-				"Assign a hero to this alert?";
-			_actionButton.onClick.AddListener(
-				delegate { GameManager.Instance.QuestCreator.SelectAlertForQuest(_alert); });
-		}
+		SetButtonCallbacks(hero);
 
 		switch (_alert.AlertType) {
 			case KingdomAlert.AlertTypeEnum.EnemySpotted:
 				_alertQuantity.text = 
 					string.Format(_alert.QuantityTextTemplate, _alert.Quantity, _alert.EnemyName);
-				_canvas.enabled = true;
-
 				break;
+			case KingdomAlert.AlertTypeEnum.NewCitySite:
+				string plurality;
+				if (_alert.Quantity == 1) {
+					plurality = "site has";
+				} else {
+					plurality = "sites have";
+				}
+				_alertQuantity.text =
+					string.Format(_alert.QuantityTextTemplate, _alert.Quantity, plurality);
+				break;
+		}
+		_canvas.enabled = true;
+	}
+
+	private void SetButtonCallbacks(Hero hero) {
+
+		// Set the button text based on context.
+		// This is true if a hero has already been selected.
+		if (QuestBuilder.SelectingAlertForQuest) {
+			_actionButton.transform.FindChildRecursive("Text").GetComponent<Text>().text =
+				"Assign " + hero.Name + " to this quest?";
+			_actionButton.onClick.AddListener(
+				delegate { GameManager.Instance.QuestCreator.AssignAlertToHero(_alert); });
+		} else {
+			_actionButton.transform.FindChildRecursive("Text").GetComponent<Text>().text =
+				"Assign a hero to this quest?";
+			_actionButton.onClick.AddListener(
+				delegate { GameManager.Instance.QuestCreator.SelectAlertForQuest(_alert); });
 		}
 	}
 
