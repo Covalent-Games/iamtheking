@@ -97,7 +97,7 @@ public class KingdomAlert : MonoBehaviour {
 			if (hero.Cunning < low) {
 				low = hero.Cunning;
 			}
-			if (hero.Strength < high) {
+			if (hero.Strength > high) {
 				high = hero.Strength;
 			}
 			if (hero.Wisdom > high) {
@@ -126,7 +126,7 @@ public class KingdomAlert : MonoBehaviour {
 
 		TimeSpan subtractionTime;
 		while (enabled) {
-			if (!Blocked && HeroesAtAlert == 0) {
+			if (HeroesAtAlert == 0) {
 				subtractionTime = new TimeSpan(0, 0, 0, 0, (int)(Time.deltaTime * 5 * 1000));
 				Duration = Duration.Subtract(subtractionTime);
 				_timer.text = string.Format("{0:D2}:{1:D2}", Duration.Minutes, Duration.Seconds);

@@ -92,6 +92,9 @@ public class Hero : MonoBehaviour {
 	public void Die() {
 
 		GameManager.Instance.RemoveHero(ID);
+		if (Quests.Count > 0) {
+			Quests[0].Alert.HeroesAtAlert--;
+		}
 	}
 
 	private void LevelUp() {
@@ -204,7 +207,7 @@ public class Hero : MonoBehaviour {
 
 	private void AttackEnemy(QuestObject currentQuest) {
 
-		float winChance = Mathf.Clamp(Strength / currentQuest.Difficulty, .01f, .90f);
+		float winChance = Mathf.Clamp(Strength / currentQuest.Difficulty, .10f, .90f);
 		float roll = UnityEngine.Random.value;
 		if (roll <= winChance) {
 			Debug.Log(string.Format("{0} rolled a {1} against {2} and has slain a foe!",
